@@ -16,9 +16,11 @@ Authors
 -------
 
 **Dr Rory Lewis**
+
 + http://www.rorylewis.com
 
 **Devon Bryant**
+
 + http://github.com/devonbryant
 
 Copyright and license
