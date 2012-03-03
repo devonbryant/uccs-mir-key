@@ -1,11 +1,12 @@
-function [data,sr,bts,chroma,domnotes] = beatsyncfeat(file, sr)
-% function [data,sr,bts,chroma,domnotes] = beatsyncfeat(file, sr)
+function [data,sr,bts,chroma,domnotes,bsas] = beatsyncfeat(file, sr, normalize)
+% function [data,sr,bts,chroma,domnotes] = beatsyncfeat(file, sr, normalize)
 %
 % Calculate the beat-synchronous features for a given audio file.
 %
 % Parameters:
 %     file      the audio file to use
 %     sr        the target sampling rate (22050 if not specified)
+%     normalize whether or not to normalize the results (default true)
 %
 % Output:
 %     data      the audio waveform data
@@ -13,6 +14,7 @@ function [data,sr,bts,chroma,domnotes] = beatsyncfeat(file, sr)
 %     bts       an array of beat times (in seconds)
 %     chroma	the averaged chromagrams (lining up with the beat times)
 %     domnotes  an array of the most dominant note for each beat
+%     bsas      the beat-synchronous attack slope
 %
 % License:
 %     UCCS MIR Key Detection
@@ -32,6 +34,7 @@ function [data,sr,bts,chroma,domnotes] = beatsyncfeat(file, sr)
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 if nargin < 2; sr = 22050; end
+if nargin < 3; normalize = 1; end
 
 % Read in the audio data and calculate the beat times
 [data,sr] = audioread(file,sr,1);
@@ -40,6 +43,16 @@ bts = beattimes(data, sr);
 % Extract the various features using the beat times to synchronize
 chroma = beatsyncchroma(bts, data, sr);
 domnotes = beatsyncdomnotes(chroma);
+[at,as,bsas] = beatsyncattackslope(data, sr, bts);
+
+if normalize
+   chroma = normV(chroma);
+   bsas = normV(bsas);
+end
 
 end
 
+function I = normV(A)
+    I = A - min(A(:));
+    I = I / max(I(:));
+end
