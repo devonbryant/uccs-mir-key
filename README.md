@@ -11,6 +11,7 @@ The UCCS MIR key detection algorithms require the following libraries:
 + **LabROSA Chroma Feature Analysis and Beat-Tracking** - http://labrosa.ee.columbia.edu/projects/coversongs
 + **LabROSA audioread** - http://labrosa.ee.columbia.edu/matlab/audioread
 + **MIRtoolbox** - http://www.jyu.fi/hum/laitokset/musiikki/en/research/coe/materials/mirtoolbox/mirtoolbox
++ **Bayes Net Toolbox for Matlab** - http://code.google.com/p/bnt/
 
 Authors
 -------
