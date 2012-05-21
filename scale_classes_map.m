@@ -1,12 +1,15 @@
-function beatsynccellcsvwrite(file, bts, celldata)
-% function beatsynccellcsvwrite(file, bts, celldata)
+function scale_map = scale_classes_map(tonics, modes, idxs)
+% function scale_map = scale_classes_map(tonics, modes, idxs)
 %
-% Write out the beat-synchronous cell data to a csv file.
+% Build a map of scale names to index values
 %
 % Parameters:
-%     file          the csv file to write to
-%     bts           the array of beat times (in seconds)
-%     celldata      the cell data (lining up with the beat times)
+%     tonics        the scale tonics (roots)
+%     modes         the scale modes (key families)
+%     idxs          the index values to map
+%
+% Output:
+%     scale_map     a map of scale names to index values
 %
 % License:
 %     UCCS MIR Key Detection
@@ -24,19 +27,22 @@ function beatsynccellcsvwrite(file, bts, celldata)
 %
 %     You should have received a copy of the GNU Affero General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+if nargin < 3; idxs = 1:length(tonics); end
 
-fid = fopen(file, 'w');
-
-for row=1:length(bts)
-    fprintf(fid, '%f,', bts(row));
-    if isnumeric(celldata{row})
-        fprintf(fid, '%d\n', celldata{row});
-    else
-        fprintf(fid, '%s\n', celldata{row});
+scale_map = containers.Map();
+count = 1;
+for i=1:length(idxs)
+    idx = idxs(i);
+    tonic_inst = tonics{idx};
+    for j=1:length(tonic_inst)
+        scale_name = [tonic_inst{j}, ' ', modes{idx}{j}];
+        if ~isKey(scale_map, scale_name)
+            scale_map(scale_name) = count;
+%             fprintf('%s = %d\n', scale_name, count);
+            count = count + 1;
+        end
     end
 end
-
-fclose(fid);
 
 end
 

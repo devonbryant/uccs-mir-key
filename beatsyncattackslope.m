@@ -43,27 +43,15 @@ as = mirgetdata(miras);
 at_cell = get(miras, 'FramePos');
 at = mean(at_cell{1}{1});
 
-bsas = zeros(size(bts));
-bidx = 1;
-asidx = 1;
-while at(1) > bts(bidx + 1)
-    bidx = bidx+1;
-end
-while bidx <= length(bts)
-    while asidx < length(at) && at(asidx) <= bts(bidx)
-        asidx = asidx + 1;
+bsas = bts_align(bts,num2cell(at),num2cell(as));
+for i=1:length(bsas)
+    if isempty(bsas{i})
+        bsas{i} = 0;
     end
-    bt = bts(bidx);
-    if at(asidx) >= bt
-        pidx = asidx-1;
-        if (pidx < 1); pidx = 1; end
-        idxs = [pidx, asidx];
-        [mv,mi] = min([abs(at(pidx)-bt),abs(at(asidx)-bt)]);
-        bsas(bidx) = as(idxs(mi));
-    end
-    
-    bidx = bidx+1;
 end
+
+% Convert back to array
+bsas = cell2mat(bsas);
 
 end
 

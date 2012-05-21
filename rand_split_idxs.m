@@ -1,12 +1,15 @@
-function beatsynccellcsvwrite(file, bts, celldata)
-% function beatsynccellcsvwrite(file, bts, celldata)
+function [tr_idxs, tst_idxs] = rand_split_idxs(num_samples, split_pct)
+% function [tr_idxs, tst_idxs] = rand_split_idxs(num_samples, split_pct)
 %
-% Write out the beat-synchronous cell data to a csv file.
+% Get a random split of training/test indexes
 %
 % Parameters:
-%     file          the csv file to write to
-%     bts           the array of beat times (in seconds)
-%     celldata      the cell data (lining up with the beat times)
+%     num_samples   the number of samples to split
+%     split_pct     the split percentage (% training - default 0.6)
+%
+% Output:
+%     tr_idxs       the training indexes
+%     tst_idxs      the test indexes
 %
 % License:
 %     UCCS MIR Key Detection
@@ -24,19 +27,21 @@ function beatsynccellcsvwrite(file, bts, celldata)
 %
 %     You should have received a copy of the GNU Affero General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+if nargin < 2; split_pct = 0.6; end
 
-fid = fopen(file, 'w');
+tr_size = floor(num_samples * split_pct);
 
-for row=1:length(bts)
-    fprintf(fid, '%f,', bts(row));
-    if isnumeric(celldata{row})
-        fprintf(fid, '%d\n', celldata{row});
-    else
-        fprintf(fid, '%s\n', celldata{row});
-    end
+tr_idxs = zeros(1,tr_size);
+tst_idxs = zeros(1,(num_samples-tr_size));
+
+rnums = randperm(num_samples);
+for i=1:tr_size
+    tr_idxs(i) = rnums(i);
 end
 
-fclose(fid);
+for i=(tr_size+1):num_samples
+    tst_idxs(i-tr_size) = rnums(i);
+end
 
 end
 
